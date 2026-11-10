@@ -137,7 +137,7 @@ public class Login extends javax.swing.JFrame {
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
        
         String correo = txtCorreo.getText();
-        String contrasena = new String(txtContrasena.getPassword());
+        String contrasena = txtContrasena.getText();
         
         if(correo.isEmpty() || contrasena.isEmpty()) {
             
