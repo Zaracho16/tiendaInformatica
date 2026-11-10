@@ -8,36 +8,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.mindrot.jbcrypt.BCrypt;
 
 public class UsuarioDAO {
     
         public Usuario obtenerUsuario(String correo, String contrasena) {
         
-        String sql = "SELECT id, nombre, correo, contrasena" + " FROM usuario WHERE correo = ?";
+        String sql = "SELECT id_usuario, nombre, correo, contrasena" + " FROM usuarios WHERE correo = ? AND contrasena = ?";
         
         try (Connection conexion = ConexionDB.conectar(); PreparedStatement sentencia = conexion.prepareStatement(sql)) {
             
             sentencia.setString(1, correo);
+            sentencia.setString(2, contrasena);
             
             try (ResultSet resultado = sentencia.executeQuery()) {
             
                 if (resultado.next()) {
                     
-                    String passwordHash = resultado.getString("password");
+                    Usuario usuario = new Usuario(
+                            resultado.getInt("id_usuario"),
+                            resultado.getString("nombre"),
+                            resultado.getString("correo"),
+                            resultado.getString("contrasena")
+                    );
                     
-                    if(BCrypt.checkpw(contrasena, passwordHash)) {
-                        
-                        Usuario usuario = new Usuario(
-                                resultado.getInt("id"),
-                                resultado.getString("nombre"),
-                                resultado.getString("correo"),
-                                resultado.getString("contrasena")
-                        );
-                        
-                        return usuario;
-                        
-                    }
+                    return usuario;
                     
                 }
                 
