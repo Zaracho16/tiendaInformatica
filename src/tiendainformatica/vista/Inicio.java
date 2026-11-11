@@ -1,6 +1,7 @@
 
 package tiendainformatica.vista;
 
+import tiendainformatica.modelo.Producto;
 import tiendainformatica.modelo.Usuario;
 
 
@@ -61,6 +62,7 @@ public class Inicio extends javax.swing.JFrame {
         btnProductos.setFocusPainted(false);
         btnProductos.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnProductos.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnProductos.addActionListener(this::btnProductosActionPerformed);
 
         btnCategorias.setBackground(new java.awt.Color(0, 153, 204));
         btnCategorias.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
@@ -208,6 +210,14 @@ public class Inicio extends javax.swing.JFrame {
         clientes.setVisible(true);
         
     }//GEN-LAST:event_btnClientesActionPerformed
+
+    private void btnProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductosActionPerformed
+        
+        Productos productos = new Productos();
+        
+        productos.setVisible(true);
+        
+    }//GEN-LAST:event_btnProductosActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
