@@ -27,7 +27,7 @@ public class Producto {
         this.idCategoria = idCategoria;
         this.nombreCategoria = nombreCategoria;
     }
-    
+
     public Producto(String nombre, String descripcion, BigDecimal precio, int stock, int idCategoria) {
         this.nombre = nombre;
         this.descripcion = descripcion;

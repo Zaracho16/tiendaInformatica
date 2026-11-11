@@ -228,6 +228,7 @@ public class Inicio extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnCategoriasActionPerformed
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCategorias;
     private javax.swing.JButton btnClientes;
