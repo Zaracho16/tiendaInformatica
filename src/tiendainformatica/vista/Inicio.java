@@ -72,6 +72,7 @@ public class Inicio extends javax.swing.JFrame {
         btnCategorias.setFocusPainted(false);
         btnCategorias.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnCategorias.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnCategorias.addActionListener(this::btnCategoriasActionPerformed);
 
         btnNuevaVenta.setBackground(new java.awt.Color(102, 102, 0));
         btnNuevaVenta.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
@@ -219,6 +220,13 @@ public class Inicio extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnProductosActionPerformed
 
+    private void btnCategoriasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriasActionPerformed
+       
+        Categorias categorias = new Categorias();
+        
+        categorias.setVisible(true);
+        
+    }//GEN-LAST:event_btnCategoriasActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCategorias;
