@@ -60,7 +60,7 @@ public class Login extends javax.swing.JFrame {
 
         btnIniciarSesion.setBackground(new java.awt.Color(7, 139, 255));
         btnIniciarSesion.setFont(new java.awt.Font("Liberation Sans", 1, 16)); // NOI18N
-        btnIniciarSesion.setForeground(new java.awt.Color(0, 0, 0));
+        btnIniciarSesion.setForeground(new java.awt.Color(255, 255, 255));
         btnIniciarSesion.setText("Entrar");
         btnIniciarSesion.addActionListener(this::btnIniciarSesionActionPerformed);
 

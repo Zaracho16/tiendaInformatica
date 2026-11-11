@@ -124,7 +124,9 @@ public class Productos extends javax.swing.JFrame {
 
         btnGuardarProducto.setBackground(new java.awt.Color(0, 153, 0));
         btnGuardarProducto.setFont(new java.awt.Font("Liberation Sans", 1, 13)); // NOI18N
+        btnGuardarProducto.setForeground(new java.awt.Color(255, 255, 255));
         btnGuardarProducto.setText("Guardar");
+        btnGuardarProducto.setFocusPainted(false);
 
         javax.swing.GroupLayout panelDatosProductoLayout = new javax.swing.GroupLayout(panelDatosProducto);
         panelDatosProducto.setLayout(panelDatosProductoLayout);
