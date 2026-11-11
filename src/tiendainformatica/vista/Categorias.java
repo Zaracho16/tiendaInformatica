@@ -1,20 +1,19 @@
 
-package tiendaInformatica.vista;
-import tiendainformatica.db.ConexionDB;
+package tiendainformatica.vista;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
+import tiendainformatica.dao.CategoriaDAO;
+import tiendainformatica.modelo.Categoria;
 
 
 
 public class Categorias extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Categorias.class.getName());
-
+    private CategoriaDAO categoriaDAO = new CategoriaDAO();
     
    public Categorias() {
     initComponents();
@@ -31,36 +30,27 @@ public class Categorias extends javax.swing.JFrame {
 }
    private void cargarCategorias() {
 
-    DefaultTableModel modelo = (DefaultTableModel) tablaCategorias.getModel();
+    DefaultTableModel modelo =
+            (DefaultTableModel) tablaCategorias.getModel();
 
     modelo.setRowCount(0);
 
-    String sql = "SELECT nombre, descripcion FROM categorias ORDER BY id_categoria";
+    List<Categoria> lista = categoriaDAO.listarCategorias();
 
-    try (Connection conexion = ConexionDB.conectar();
-         PreparedStatement sentencia = conexion.prepareStatement(sql);
-         ResultSet resultado = sentencia.executeQuery()) {
+    for (Categoria categoria : lista) {
 
-        while (resultado.next()) {
+        Object[] fila = {
+            categoria.getNombre(),
+            categoria.getDescripcion()
+        };
 
-            Object[] fila = {
-                resultado.getString("nombre"),
-                resultado.getString("descripcion")
-            };
-
-            modelo.addRow(fila);
-        }
-
-    } catch (SQLException e) {
-
-       javax.swing.JOptionPane.showMessageDialog(this,
-        "Error al cargar las categorías: " + e.getMessage());
+        modelo.addRow(fila);
     }
 }
    
    
 
-  
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -223,96 +213,47 @@ public class Categorias extends javax.swing.JFrame {
          String nombre = txtNombre.getText().trim();
     String descripcion = txtDescripcion.getText().trim();
 
-    // Verificar que el nombre no esté vacío
+    // Validar nombre
     if (nombre.isEmpty()) {
-
         JOptionPane.showMessageDialog(this,
-                "Ingrese el nombre de la categoría");
-
+                "El nombre de la categoría es obligatorio.");
         txtNombre.requestFocus();
         return;
     }
 
-    // Verificar la cantidad de caracteres
     if (nombre.length() > 100) {
-
         JOptionPane.showMessageDialog(this,
-                "El nombre no puede superar los 100 caracteres");
-
+                "El nombre no puede superar los 100 caracteres.");
         return;
     }
 
     if (descripcion.length() > 250) {
-
         JOptionPane.showMessageDialog(this,
-                "La descripción no puede superar los 250 caracteres");
-
+                "La descripción no puede superar los 250 caracteres.");
         return;
     }
 
-    // Consulta SQL para guardar
-    String sql = "INSERT INTO categorias (nombre, descripcion) VALUES (?, ?)";
+    Categoria categoria = new Categoria(nombre, descripcion);
 
-    try (Connection conexion = ConexionDB.conectar();
-         PreparedStatement sentencia = conexion.prepareStatement(sql)) {
-
-        sentencia.setString(1, nombre);
-
-        if (descripcion.isEmpty()) {
-            sentencia.setNull(2, java.sql.Types.VARCHAR);
-        } else {
-            sentencia.setString(2, descripcion);
-        }
-
-        sentencia.executeUpdate();
+    if (categoriaDAO.guardarCategoria(categoria)) {
 
         JOptionPane.showMessageDialog(this,
-                "Categoría guardada correctamente");
+                "Categoría guardada correctamente.");
 
-        // Limpiar campos
         txtNombre.setText("");
         txtDescripcion.setText("");
 
-        // Actualizar tabla
         cargarCategorias();
 
         txtNombre.requestFocus();
 
-    } catch (SQLException e) {
+    } else {
 
-        if ("23505".equals(e.getSQLState())) {
-
-            JOptionPane.showMessageDialog(this,
-                    "Ya existe una categoría con ese nombre");
-
-        } else {
-
-            JOptionPane.showMessageDialog(this,
-                    "Error al guardar la categoría: " + e.getMessage());
-
-        }
+        JOptionPane.showMessageDialog(this,
+                "No se pudo guardar la categoría. Verificá si ya existe.");
     }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
-    
-    public static void main(String args[]) {
-       
-       
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-       
-
-        
-        java.awt.EventQueue.invokeLater(() -> new Categorias().setVisible(true));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardar;
