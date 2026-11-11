@@ -1,17 +1,99 @@
 
 package tiendainformatica.vista;
 
+import tiendainformatica.dao.ProductoDAO;
+import tiendainformatica.dao.CategoriaDAO;
+import tiendainformatica.modelo.Producto;
+import tiendainformatica.modelo.Categoria;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class Productos extends javax.swing.JFrame {
     
+    private ProductoDAO productoDAO = new ProductoDAO();
+    private CategoriaDAO categoriaDAO = new CategoriaDAO();
+
+    private Map<String, Integer> categoriasMap = new HashMap<>();
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Productos.class.getName());
+    
+    private void configurarTabla() {
+
+    DefaultTableModel modelo = new DefaultTableModel();
+
+        modelo.addColumn("ID");
+        modelo.addColumn("Producto");
+        modelo.addColumn("Descripción");
+        modelo.addColumn("Precio");
+        modelo.addColumn("Stock");
+        modelo.addColumn("Categoría");
+
+        tablaProductosRegistrados.setModel(modelo);
+    }
+    
+    private void cargarCategorias() {
+
+        cbCategoriasProductos.removeAllItems();
+        categoriasMap.clear();
+
+        List<Categoria> lista = categoriaDAO.listarCategorias();
+
+        for (Categoria categoria : lista) {
+
+            cbCategoriasProductos.addItem(categoria.getNombre());
+
+            categoriasMap.put(
+                    categoria.getNombre(),
+                    categoria.getIdCategoria()
+            );
+        }
+
+        if (lista.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay categorías registradas. Primero registre una categoría.");
+        }
+    }
+
+    private void cargarProductos() {
+
+        DefaultTableModel modelo =
+                (DefaultTableModel) tablaProductosRegistrados.getModel();
+
+        modelo.setRowCount(0);
+
+        List<Producto> lista = productoDAO.listarProductos();
+
+        for (Producto producto : lista) {
+
+            Object[] fila = {
+                producto.getIdProducto(),
+                producto.getNombre(),
+                producto.getDescripcion(),
+                producto.getPrecio(),
+                producto.getStock(),
+                producto.getNombreCategoria()
+            };
+
+            modelo.addRow(fila);
+        }
+    }
 
     public Productos() {
         
-        initComponents();
-        
+
+    initComponents();
+
         setLocationRelativeTo(null);
-        
         setResizable(false);
+
+        configurarTabla();
+        cargarCategorias();
+        cargarProductos();
         
     }
 
@@ -127,6 +209,7 @@ public class Productos extends javax.swing.JFrame {
         btnGuardarProducto.setForeground(new java.awt.Color(255, 255, 255));
         btnGuardarProducto.setText("Guardar");
         btnGuardarProducto.setFocusPainted(false);
+        btnGuardarProducto.addActionListener(this::btnGuardarProductoActionPerformed);
 
         javax.swing.GroupLayout panelDatosProductoLayout = new javax.swing.GroupLayout(panelDatosProducto);
         panelDatosProducto.setLayout(panelDatosProductoLayout);
@@ -250,30 +333,98 @@ public class Productos extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreProductoActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void btnGuardarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarProductoActionPerformed
+       
+        String nombre = txtNombreProducto.getText().trim();
+        String descripcion = txtDescripcionProducto.getText().trim();
+        String precioTexto = txtPrecioProducto.getText().trim();
+        String stockTexto = txtStockInicialProducto.getText().trim();
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Productos().setVisible(true));
-    }
+        if (nombre.isEmpty() || precioTexto.isEmpty() || stockTexto.isEmpty()) {
+
+            JOptionPane.showMessageDialog(this, "Complete todos los campos obligatorios.");
+
+            return;
+        }
+
+        if (nombre.length() > 100) {
+            JOptionPane.showMessageDialog(this, "El nombre no puede superar los 100 caracteres.");
+            return;
+        }
+
+        if (descripcion.length() > 250) {
+            JOptionPane.showMessageDialog(this,  "La descripción no puede superar los 250 caracteres.");
+            return;
+        }
+
+        BigDecimal precio;
+        int stock;
+
+        try {
+            precio = new BigDecimal(precioTexto.replace(",", "."));
+
+            if (precio.compareTo(BigDecimal.ZERO) <= 0) {
+                JOptionPane.showMessageDialog(this, "El precio debe ser mayor que cero.");
+                return;
+            }
+
+            if (precio.scale() > 2) {
+                JOptionPane.showMessageDialog(this, "El precio admite como máximo dos decimales.");
+                return;
+            }
+
+            stock = Integer.parseInt(stockTexto);
+
+            if (stock < 0) {
+                JOptionPane.showMessageDialog(this, "El stock no puede ser negativo.");
+                return;
+            }
+
+        } catch (NumberFormatException e) {
+
+            JOptionPane.showMessageDialog(this, "Ingrese un precio y un stock válidos.");
+
+            return;
+        }
+
+        String nombreCategoria = (String) cbCategoriasProductos.getSelectedItem();
+
+        if (nombreCategoria == null || !categoriasMap.containsKey(nombreCategoria)) {
+
+            JOptionPane.showMessageDialog(this, "Seleccione una categoría válida.");
+
+            return;
+        }
+
+        int idCategoria = categoriasMap.get(nombreCategoria);
+
+        Producto producto = new Producto(
+                nombre,
+                descripcion,
+                precio,
+                stock,
+                idCategoria
+        );
+
+        if (productoDAO.guardarProducto(producto)) {
+
+            JOptionPane.showMessageDialog(this, "Producto registrado correctamente.");
+
+            txtNombreProducto.setText("");
+            txtDescripcionProducto.setText("");
+            txtPrecioProducto.setText("");
+            txtStockInicialProducto.setText("");
+            
+            cargarProductos();
+
+            txtNombreProducto.requestFocus();
+
+        } else {
+
+            JOptionPane.showMessageDialog(this, "No se pudo registrar el producto. Verifique los datos.");
+        }   
+        
+    }//GEN-LAST:event_btnGuardarProductoActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardarProducto;

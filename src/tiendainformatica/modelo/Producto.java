@@ -28,6 +28,14 @@ public class Producto {
         this.nombreCategoria = nombreCategoria;
     }
 
+    public Producto(String nombre, String descripcion, BigDecimal precio, int stock, int idCategoria) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.stock = stock;
+        this.idCategoria = idCategoria;
+    }
+
     public int getIdProducto() {
         return idProducto;
     }
@@ -83,10 +91,6 @@ public class Producto {
     public void setNombreCategoria(String nombreCategoria) {
         this.nombreCategoria = nombreCategoria;
     }
-    
-    
-    
-    
     
     
 }
