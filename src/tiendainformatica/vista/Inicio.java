@@ -1,7 +1,6 @@
 
 package tiendainformatica.vista;
 
-import tiendainformatica.modelo.Producto;
 import tiendainformatica.modelo.Usuario;
 
 
@@ -34,7 +33,7 @@ public class Inicio extends javax.swing.JFrame {
         btnCategorias = new javax.swing.JButton();
         btnNuevaVenta = new javax.swing.JButton();
         btnStock = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnVentas = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
         panelTitulo = new javax.swing.JPanel();
         lblTitulo = new javax.swing.JLabel();
@@ -94,14 +93,15 @@ public class Inicio extends javax.swing.JFrame {
         btnStock.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnStock.addActionListener(this::btnStockActionPerformed);
 
-        jButton1.setBackground(new java.awt.Color(153, 0, 153));
-        jButton1.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tiendainformatica/recursos/venta (1).png"))); // NOI18N
-        jButton1.setText("Ventas");
-        jButton1.setFocusPainted(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnVentas.setBackground(new java.awt.Color(153, 0, 153));
+        btnVentas.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
+        btnVentas.setForeground(new java.awt.Color(255, 255, 255));
+        btnVentas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/tiendainformatica/recursos/venta (1).png"))); // NOI18N
+        btnVentas.setText("Ventas");
+        btnVentas.setFocusPainted(false);
+        btnVentas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnVentas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnVentas.addActionListener(this::btnVentasActionPerformed);
 
         btnSalir.setBackground(new java.awt.Color(255, 0, 51));
         btnSalir.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
@@ -120,7 +120,7 @@ public class Inicio extends javax.swing.JFrame {
                     .addComponent(btnNuevaVenta, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(panelFuncionesSistemasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
                 .addGap(140, 140, 140)
                 .addGroup(panelFuncionesSistemasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -144,7 +144,7 @@ public class Inicio extends javax.swing.JFrame {
                 .addGroup(panelFuncionesSistemasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnStock, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnNuevaVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                 .addComponent(btnSalir, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
@@ -246,6 +246,13 @@ public class Inicio extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnStockActionPerformed
 
+    private void btnVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentasActionPerformed
+       
+        Ventas ventas = new Ventas(usuario);
+        
+        ventas.setVisible(true);
+        
+    }//GEN-LAST:event_btnVentasActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCategorias;
@@ -254,7 +261,7 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JButton btnProductos;
     private javax.swing.JButton btnSalir;
     private javax.swing.JButton btnStock;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnVentas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JPanel panelFuncionesSistemas;
