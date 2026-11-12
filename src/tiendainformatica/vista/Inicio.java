@@ -231,7 +231,7 @@ public class Inicio extends javax.swing.JFrame {
 
     private void btnNuevaVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaVentaActionPerformed
        
-        NuevaVenta nuevaventa = new NuevaVenta();
+        NuevaVenta nuevaventa = new NuevaVenta(usuario);
         
         nuevaventa.setVisible(true);
         

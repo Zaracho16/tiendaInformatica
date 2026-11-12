@@ -1,17 +1,53 @@
 
 package tiendainformatica.vista;
 
+import tiendainformatica.modelo.Cliente;
+import tiendainformatica.modelo.Producto;
+import tiendainformatica.dao.ClienteDAO;
+import tiendainformatica.dao.ProductoDAO;
+import tiendainformatica.dao.MetodoPagoDAO;
+import tiendainformatica.modelo.MetodoPago;
+
+import javax.swing.table.DefaultTableModel;
+import java.math.BigDecimal;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import java.util.List;
+import javax.swing.JOptionPane;
+import tiendainformatica.dao.VentaDAO;
+import tiendainformatica.modelo.Usuario;
+
+import tiendainformatica.modelo.DetalleVenta;
+import java.util.ArrayList;
+import java.sql.SQLException;
+
 public class NuevaVenta extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(NuevaVenta.class.getName());
+    
+    private Usuario usuario;
 
-    public NuevaVenta() {
+    public NuevaVenta(Usuario usuario) {
         
         initComponents();
         
-        setLocationRelativeTo(null);
+        this.usuario = usuario;
         
+        setLocationRelativeTo(null);
         setResizable(false);
+        
+        cargarClientes();
+        cargarProductos();
+        cargarMetodosPago();
+        cargarNumeroFactura();
+        
+        txtFechaVenta.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        
+        txtFechaVenta.setEditable(false);
+        
+        System.out.println("Usuario de la venta: " + usuario.getId());
         
     }
 
@@ -24,7 +60,7 @@ public class NuevaVenta extends javax.swing.JFrame {
         txtNumeroFactura = new javax.swing.JPanel();
         lblDatosVenta = new javax.swing.JLabel();
         lblNroFactura = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtNroDeFactura = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         cbCliente = new javax.swing.JComboBox<>();
         lblFechaVenta = new javax.swing.JLabel();
@@ -42,11 +78,11 @@ public class NuevaVenta extends javax.swing.JFrame {
         cbMetodoDePago = new javax.swing.JComboBox<>();
         lblSeleccionarMetodoPago = new javax.swing.JLabel();
         btnRegistrarVenta = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnCancelarVenta = new javax.swing.JButton();
         panelAgregarProductos = new javax.swing.JPanel();
         lblAgregarProductos = new javax.swing.JLabel();
         lblProducto = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbProducto = new javax.swing.JComboBox<>();
         lblCantidad = new javax.swing.JLabel();
         txtCantidad = new javax.swing.JTextField();
         lblPrecioUnitario = new javax.swing.JLabel();
@@ -88,14 +124,13 @@ public class NuevaVenta extends javax.swing.JFrame {
         lblNroFactura.setForeground(new java.awt.Color(0, 0, 0));
         lblNroFactura.setText("Número de factura");
 
-        jTextField1.setBackground(new java.awt.Color(204, 204, 204));
+        txtNroDeFactura.setBackground(new java.awt.Color(204, 204, 204));
 
         jLabel1.setFont(new java.awt.Font("Liberation Sans", 1, 13)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Cliente");
 
         cbCliente.setBackground(new java.awt.Color(204, 204, 204));
-        cbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         lblFechaVenta.setFont(new java.awt.Font("Liberation Sans", 1, 13)); // NOI18N
         lblFechaVenta.setForeground(new java.awt.Color(0, 0, 0));
@@ -113,7 +148,7 @@ public class NuevaVenta extends javax.swing.JFrame {
                     .addComponent(lblDatosVenta)
                     .addGroup(txtNumeroFacturaLayout.createSequentialGroup()
                         .addGroup(txtNumeroFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNroDeFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblNroFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(88, 88, 88)
                         .addGroup(txtNumeroFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -137,7 +172,7 @@ public class NuevaVenta extends javax.swing.JFrame {
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(txtNumeroFacturaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNroDeFactura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtFechaVenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -219,7 +254,6 @@ public class NuevaVenta extends javax.swing.JFrame {
         jLabel2.setText("Método de pago");
 
         cbMetodoDePago.setBackground(new java.awt.Color(204, 204, 204));
-        cbMetodoDePago.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         lblSeleccionarMetodoPago.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
         lblSeleccionarMetodoPago.setForeground(new java.awt.Color(0, 0, 0));
@@ -229,11 +263,13 @@ public class NuevaVenta extends javax.swing.JFrame {
         btnRegistrarVenta.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
         btnRegistrarVenta.setForeground(new java.awt.Color(255, 255, 255));
         btnRegistrarVenta.setText("Registrar venta");
+        btnRegistrarVenta.addActionListener(this::btnRegistrarVentaActionPerformed);
 
-        jButton1.setBackground(new java.awt.Color(255, 0, 0));
-        jButton1.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Cancelar");
+        btnCancelarVenta.setBackground(new java.awt.Color(255, 0, 0));
+        btnCancelarVenta.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
+        btnCancelarVenta.setForeground(new java.awt.Color(255, 255, 255));
+        btnCancelarVenta.setText("Cancelar");
+        btnCancelarVenta.addActionListener(this::btnCancelarVentaActionPerformed);
 
         javax.swing.GroupLayout panelMetodoPagoLayout = new javax.swing.GroupLayout(panelMetodoPago);
         panelMetodoPago.setLayout(panelMetodoPagoLayout);
@@ -252,7 +288,7 @@ public class NuevaVenta extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnRegistrarVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnCancelarVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         panelMetodoPagoLayout.setVerticalGroup(
@@ -267,7 +303,7 @@ public class NuevaVenta extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbMetodoDePago, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnRegistrarVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCancelarVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -281,8 +317,8 @@ public class NuevaVenta extends javax.swing.JFrame {
         lblProducto.setForeground(new java.awt.Color(0, 0, 0));
         lblProducto.setText("Producto");
 
-        jComboBox1.setBackground(new java.awt.Color(204, 204, 204));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbProducto.setBackground(new java.awt.Color(204, 204, 204));
+        cbProducto.addItemListener(this::cbProductoItemStateChanged);
 
         lblCantidad.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
         lblCantidad.setForeground(new java.awt.Color(0, 0, 0));
@@ -301,6 +337,8 @@ public class NuevaVenta extends javax.swing.JFrame {
         btnAgregarProducto.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
         btnAgregarProducto.setForeground(new java.awt.Color(255, 255, 255));
         btnAgregarProducto.setText("Agregar producto");
+        btnAgregarProducto.setFocusPainted(false);
+        btnAgregarProducto.addActionListener(this::btnAgregarProductoActionPerformed);
 
         javax.swing.GroupLayout panelAgregarProductosLayout = new javax.swing.GroupLayout(panelAgregarProductos);
         panelAgregarProductos.setLayout(panelAgregarProductosLayout);
@@ -311,7 +349,7 @@ public class NuevaVenta extends javax.swing.JFrame {
                 .addGroup(panelAgregarProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblAgregarProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                     .addComponent(lblProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbProducto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblCantidad)
                     .addComponent(txtCantidad))
                 .addGroup(panelAgregarProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -337,7 +375,7 @@ public class NuevaVenta extends javax.swing.JFrame {
                     .addComponent(lblPrecioUnitario))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelAgregarProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtPrecioUnitario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblCantidad)
@@ -376,39 +414,248 @@ public class NuevaVenta extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+    private void cbProductoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbProductoItemStateChanged
+        
+    if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+
+        Producto producto = (Producto) cbProducto.getSelectedItem();
+
+        if (producto != null) {
+            txtPrecioUnitario.setText(producto.getPrecio().toString());
+        }
+    }
+        
+    }//GEN-LAST:event_cbProductoItemStateChanged
+
+    private void btnAgregarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarProductoActionPerformed
+  
+        Producto producto = (Producto) cbProducto.getSelectedItem();
+
+        if (producto == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Seleccioná un producto.");
+            return;
+        }
+
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+
+            int cantidad = Integer.parseInt(txtCantidad.getText().trim());
+
+            if (cantidad <= 0) {
+                JOptionPane.showMessageDialog(this,
+                        "La cantidad debe ser mayor a cero.");
+                return;
+            }
+
+            if (cantidad > producto.getStock()) {
+                JOptionPane.showMessageDialog(this,
+                        "Stock insuficiente. Disponible: " + producto.getStock());
+                return;
+            }
+
+            BigDecimal precio = producto.getPrecio();
+            BigDecimal subtotal = precio.multiply(BigDecimal.valueOf(cantidad));
+
+            DefaultTableModel modelo =
+                    (DefaultTableModel) tablaDetalleVenta.getModel();
+
+            int filaExistente = -1;
+
+            // Comprobar si el producto ya esta en la tabla
+            for (int i = 0; i < modelo.getRowCount(); i++) {
+
+                Producto productoTabla = (Producto) modelo.getValueAt(i, 0);
+
+                if (productoTabla.getIdProducto() == producto.getIdProducto()) {
+                    filaExistente = i;
                     break;
                 }
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+
+            if (filaExistente != -1) {
+
+                int cantidadAnterior =
+                        Integer.parseInt(modelo.getValueAt(filaExistente, 1).toString());
+
+                int nuevaCantidad = cantidadAnterior + cantidad;
+
+                if (nuevaCantidad > producto.getStock()) {
+                    JOptionPane.showMessageDialog(this,
+                            "No hay suficiente stock para esa cantidad.");
+                    return;
+                }
+
+                BigDecimal nuevoSubtotal =
+                        precio.multiply(BigDecimal.valueOf(nuevaCantidad));
+
+                modelo.setValueAt(nuevaCantidad, filaExistente, 1);
+                modelo.setValueAt(nuevoSubtotal, filaExistente, 3);
+
+            } else {
+
+                modelo.addRow(new Object[]{
+                    producto,
+                    cantidad,
+                    precio,
+                    subtotal
+                });
+            }
+
+            calcularTotalVenta();
+
+            txtCantidad.setText("");
+
+        } catch (NumberFormatException e) {
+
+            JOptionPane.showMessageDialog(this,
+                    "Ingresá una cantidad válida.");
         }
-        //</editor-fold>
+        
+    }//GEN-LAST:event_btnAgregarProductoActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new NuevaVenta().setVisible(true));
+    private void btnRegistrarVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarVentaActionPerformed
+        
+        Cliente cliente = (Cliente) cbCliente.getSelectedItem();
+
+        if (cliente == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona un cliente.");
+            return;
+        }
+
+        MetodoPago metodoPago = (MetodoPago) cbMetodoDePago.getSelectedItem();
+
+        if (metodoPago == null) {
+            JOptionPane.showMessageDialog(this, "Selecciona un método de pago.");
+            return;
+        }
+
+        DefaultTableModel modelo = (DefaultTableModel) tablaDetalleVenta.getModel();
+
+        if (modelo.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Agrega al menos un producto.");
+            return;
+        }
+
+        List<DetalleVenta> detalles = new ArrayList<>();
+
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+
+            Producto producto = (Producto) modelo.getValueAt(i, 0);
+
+            int cantidad = Integer.parseInt(
+                    modelo.getValueAt(i, 1).toString()
+            );
+
+            BigDecimal precioUnitario = new BigDecimal(
+                    modelo.getValueAt(i, 2).toString()
+            );
+
+            detalles.add(new DetalleVenta(
+                    producto.getIdProducto(),
+                    cantidad,
+                    precioUnitario
+            ));
+        }
+
+        try {
+
+            VentaDAO dao = new VentaDAO();
+
+            dao.registrarVentaCompleta(
+                    txtNroDeFactura.getText(),
+                    cliente.getIdCliente(),
+                    usuario.getId(),
+                    metodoPago.getIdMetodoPago(),
+                    detalles
+            );
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "¡Venta registrada correctamente!"
+            );
+
+            modelo.setRowCount(0);
+
+
+            txtVentaTotal.setText("0.00");
+
+            cargarNumeroFactura();
+
+            cargarProductos();
+
+        } catch (SQLException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Error al registrar la venta: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+        
+    }//GEN-LAST:event_btnRegistrarVentaActionPerformed
+
+    private void btnCancelarVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarVentaActionPerformed
+        
+      
+       DefaultTableModel modelo = (DefaultTableModel) tablaDetalleVenta.getModel();
+
+       modelo.setRowCount(0);
+
+       txtCantidad.setText("");
+       txtPrecioUnitario.setText("");
+       txtVentaTotal.setText("0.00");
+       cargarNumeroFactura();
+
+
+       if (cbCliente.getItemCount() > 0) {
+           cbCliente.setSelectedIndex(0);
+       }
+
+       if (cbMetodoDePago.getItemCount() > 0) {
+           cbMetodoDePago.setSelectedIndex(0);
+       }
+
+       if (cbProducto.getItemCount() > 0) {
+           cbProducto.setSelectedIndex(0);
+       }
+
+       JOptionPane.showMessageDialog(
+               this,
+               "Venta cancelada correctamente."
+       );  
+        
+    }//GEN-LAST:event_btnCancelarVentaActionPerformed
+
+    
+    private void calcularTotalVenta() {
+
+        DefaultTableModel modelo =
+                (DefaultTableModel) tablaDetalleVenta.getModel();
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+
+            BigDecimal subtotal =
+                    new BigDecimal(modelo.getValueAt(i, 3).toString());
+
+            total = total.add(subtotal);
+        }
+
+        txtVentaTotal.setText(total.toString());
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarProducto;
+    private javax.swing.JButton btnCancelarVenta;
     private javax.swing.JButton btnRegistrarVenta;
-    private javax.swing.JComboBox<String> cbCliente;
-    private javax.swing.JComboBox<String> cbMetodoDePago;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<Cliente> cbCliente;
+    private javax.swing.JComboBox<MetodoPago> cbMetodoDePago;
+    private javax.swing.JComboBox<Producto> cbProducto;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JLabel lblAgregarProductos;
     private javax.swing.JLabel lblCantidad;
@@ -428,9 +675,84 @@ public class NuevaVenta extends javax.swing.JFrame {
     private javax.swing.JTable tablaDetalleVenta;
     private javax.swing.JTextField txtCantidad;
     private javax.swing.JTextField txtFechaVenta;
+    private javax.swing.JTextField txtNroDeFactura;
     private javax.swing.JPanel txtNumeroFactura;
     private javax.swing.JTextField txtPrecioUnitario;
     private javax.swing.JPanel txtTotalVenta;
     private javax.swing.JTextField txtVentaTotal;
     // End of variables declaration//GEN-END:variables
+
+    private void cargarClientes() {
+
+        cbCliente.removeAllItems();
+
+        ClienteDAO dao = new ClienteDAO();
+
+        List<Cliente> clientes = dao.listarClientes();
+
+        for (Cliente cliente : clientes) {
+            cbCliente.addItem(cliente);
+        }
+
+        if (clientes.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "No hay clientes registrados.");
+        }
+    }
+    
+    private void cargarProductos() {
+
+        cbProducto.removeAllItems();
+
+        ProductoDAO dao = new ProductoDAO();
+
+        List<Producto> productos = dao.listarProductos();
+
+        for (Producto producto : productos) {
+
+            if (producto.getStock() > 0) {
+                cbProducto.addItem(producto);
+            }
+        }
+
+        if (cbProducto.getItemCount() == 0) {
+            JOptionPane.showMessageDialog(this,
+                    "No hay productos disponibles en stock.");
+        }
+    }
+    
+    
+    private void cargarMetodosPago() {
+
+        cbMetodoDePago.removeAllItems();
+
+        MetodoPagoDAO dao = new MetodoPagoDAO();
+
+        List<MetodoPago> metodos = dao.listarMetodosPago();
+
+        for (MetodoPago metodo : metodos) {
+            cbMetodoDePago.addItem(metodo);
+        }
+
+        if (metodos.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "No hay métodos de pago registrados.");
+        }
+    }
+    
+    
+    private void cargarNumeroFactura() {
+
+         VentaDAO dao = new VentaDAO();
+
+         String numero = dao.generarNumeroFactura();
+
+         if (numero != null) {
+             txtNroDeFactura.setText(numero);
+         } else {
+             JOptionPane.showMessageDialog(this,
+                     "No se pudo generar el número de factura.");
+         }
+     }
+
 }
