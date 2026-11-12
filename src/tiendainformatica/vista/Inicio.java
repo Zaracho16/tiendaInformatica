@@ -92,6 +92,7 @@ public class Inicio extends javax.swing.JFrame {
         btnStock.setFocusPainted(false);
         btnStock.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnStock.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnStock.addActionListener(this::btnStockActionPerformed);
 
         jButton1.setBackground(new java.awt.Color(153, 0, 153));
         jButton1.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
@@ -236,6 +237,14 @@ public class Inicio extends javax.swing.JFrame {
         nuevaventa.setVisible(true);
         
     }//GEN-LAST:event_btnNuevaVentaActionPerformed
+
+    private void btnStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStockActionPerformed
+        
+        Stock ventanaStock = new Stock();
+        
+        ventanaStock.setVisible(true);
+        
+    }//GEN-LAST:event_btnStockActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
