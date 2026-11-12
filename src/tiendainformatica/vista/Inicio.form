@@ -57,7 +57,7 @@
                   </Group>
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="jButton1" max="32767" attributes="0"/>
+                      <Component id="btnVentas" max="32767" attributes="0"/>
                       <Component id="btnProductos" pref="180" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="140" pref="140" max="-2" attributes="0"/>
@@ -87,7 +87,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="btnStock" min="-2" pref="146" max="-2" attributes="0"/>
                       <Component id="btnNuevaVenta" min="-2" pref="146" max="-2" attributes="0"/>
-                      <Component id="jButton1" min="-2" pref="146" max="-2" attributes="0"/>
+                      <Component id="btnVentas" min="-2" pref="146" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="55" max="32767" attributes="0"/>
                   <Component id="btnSalir" min="-2" pref="31" max="-2" attributes="0"/>
@@ -212,7 +212,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnStockActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="btnVentas">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="99" green="0" red="99" type="rgb"/>
@@ -231,6 +231,9 @@
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnVentasActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnSalir">
           <Properties>
