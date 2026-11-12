@@ -9,7 +9,6 @@ import tiendainformatica.dao.CategoriaDAO;
 import tiendainformatica.modelo.Categoria;
 
 
-
 public class Categorias extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Categorias.class.getName());
@@ -210,47 +209,48 @@ public class Categorias extends javax.swing.JFrame {
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
        
          String nombre = txtNombre.getText().trim();
-    String descripcion = txtDescripcion.getText().trim();
+        String descripcion = txtDescripcion.getText().trim();
 
-    // Validar nombre
-    if (nombre.isEmpty()) {
-        JOptionPane.showMessageDialog(this,
-                "El nombre de la categoría es obligatorio.");
-        txtNombre.requestFocus();
-        return;
-    }
+        // Validar nombre
+        if (nombre.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "El nombre de la categoría es obligatorio.");
+            txtNombre.requestFocus();
+            return;
+        }
 
-    if (nombre.length() > 100) {
-        JOptionPane.showMessageDialog(this,
-                "El nombre no puede superar los 100 caracteres.");
-        return;
-    }
+        if (nombre.length() > 100) {
+            JOptionPane.showMessageDialog(this,
+                    "El nombre no puede superar los 100 caracteres.");
+            return;
+        }
 
-    if (descripcion.length() > 250) {
-        JOptionPane.showMessageDialog(this,
-                "La descripción no puede superar los 250 caracteres.");
-        return;
-    }
+        if (descripcion.length() > 250) {
+            JOptionPane.showMessageDialog(this,
+                    "La descripción no puede superar los 250 caracteres.");
+            return;
+        }
 
-    Categoria categoria = new Categoria(nombre, descripcion);
+        Categoria categoria = new Categoria(nombre, descripcion);
 
-    if (categoriaDAO.guardarCategoria(categoria)) {
+        if (categoriaDAO.guardarCategoria(categoria)) {
 
-        JOptionPane.showMessageDialog(this,
-                "Categoría guardada correctamente.");
+            JOptionPane.showMessageDialog(this,
+                    "Categoría guardada correctamente.");
 
-        txtNombre.setText("");
-        txtDescripcion.setText("");
+            txtNombre.setText("");
+            txtDescripcion.setText("");
 
-        cargarCategorias();
+            cargarCategorias();
 
-        txtNombre.requestFocus();
+            txtNombre.requestFocus();
 
-    } else {
+        } else {
 
-        JOptionPane.showMessageDialog(this,
-                "No se pudo guardar la categoría. Verificá si ya existe.");
-    }
+            JOptionPane.showMessageDialog(this,
+                    "No se pudo guardar la categoría. Verificá si ya existe.");
+        }
+        
     }//GEN-LAST:event_btnGuardarActionPerformed
 
 
